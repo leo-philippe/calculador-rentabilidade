@@ -1,1 +1,0 @@
-(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[974],{559:(e,s,r)=>{"use strict";r.r(s),r.d(s,{default:()=>a});var t=r(5155),u=r(2115),n=r(8999);function a(){return(0,u.useEffect)(()=>{(0,n.redirect)("/simulacao")},[]),(0,t.jsx)(t.Fragment,{})}},8408:(e,s,r)=>{Promise.resolve().then(r.bind(r,559))}},e=>{e.O(0,[441,964,358],()=>e(e.s=8408)),_N_E=e.O()}]);
