@@ -1,13 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  pageExtensions: ["jsx", "js"],
   output: "export",
   images: {
     unoptimized: true,
   },
+  basePath: "/out",
+  assetPrefix: "/out/",
+  pageExtensions: ["jsx", "js"],
   webpack: (config) => {
     config.infrastructureLogging = {
-      level: "error", // Oculta warnings como os do PackFileCacheStrategy
+      level: "error",
     };
     return config;
   },
