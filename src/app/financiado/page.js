@@ -9,15 +9,15 @@ import {
   HStack,
   VStack,
   Select,
-  Divider,
   useToast,
 } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
-import { useState } from "react";
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { NumericFormat } from "react-number-format";
 import { calculaRentabilidadeFinanciada } from "@/utils/calculaRentabilidadeFinanciada";
 
 export default function PagamentoFinanciado({ onCalculoFinalizado }) {
-  const { register, handleSubmit } = useForm({
+  const { control, handleSubmit } = useForm({
     defaultValues: {
       valor_arrematacao: 128000,
       valor_venda_estimado: 240000,
@@ -74,157 +74,113 @@ export default function PagamentoFinanciado({ onCalculoFinalizado }) {
     onCalculoFinalizado?.(res);
   };
 
+  const renderField = (name, label, options = {}) => (
+    <FormControl key={name}>
+      <FormLabel>{label}</FormLabel>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field }) => (
+          <NumericFormat
+            value={field.value}
+            onValueChange={({ value }) => field.onChange(Number(value))}
+            thousandSeparator="."
+            decimalSeparator=","
+            decimalScale={options.decimalScale || 2}
+            fixedDecimalScale
+            prefix={options.prefix}
+            suffix={options.suffix}
+            customInput={Input}
+          />
+        )}
+      />
+    </FormControl>
+  );
+
   return (
     <Box p={6} maxW="900px" mx="auto">
       <VStack as="form" spacing={4} onSubmit={handleSubmit(onSubmit)}>
         <HStack spacing={4} w="full">
-          <FormControl>
-            <FormLabel>Valor de arrematação</FormLabel>
-            <Input type="number" {...register("valor_arrematacao")} />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Valor estimado de venda</FormLabel>
-            <Input type="number" {...register("valor_venda_estimado")} />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Entrada (%)</FormLabel>
-            <Input
-              type="text"
-              inputMode="decimal"
-              pattern="[0-9]*[.,]?[0-9]*"
-              {...register("entrada_percentual")}
-            />
-          </FormControl>
+          {renderField("valor_arrematacao", "Valor de arrematação", {
+            prefix: "R$ ",
+          })}
+          {renderField("valor_venda_estimado", "Valor estimado de venda", {
+            prefix: "R$ ",
+          })}
+          {renderField("entrada_percentual", "Entrada", { suffix: " %" })}
         </HStack>
 
         <HStack spacing={4} w="full">
-          <FormControl>
-            <FormLabel>Tx. financiamento anual</FormLabel>
-            <Input
-              type="text"
-              inputMode="decimal"
-              pattern="[0-9]*[.,]?[0-9]*"
-              {...register("taxa_financiamento_aa")}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Prazo total (meses)</FormLabel>
-            <Input type="number" {...register("prazo_meses_total")} />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Taxa do leiloeiro (%)</FormLabel>
-            <Input
-              type="text"
-              inputMode="decimal"
-              pattern="[0-9]*[.,]?[0-9]*"
-              {...register("taxa_leiloeiro")}
-            />
-          </FormControl>
+          {renderField("taxa_financiamento_aa", "Tx. financiamento anual", {
+            suffix: " %",
+          })}
+          {renderField("prazo_meses_total", "Prazo total (meses)")}
+          {renderField("taxa_leiloeiro", "Taxa do leiloeiro", { suffix: " %" })}
         </HStack>
 
         <HStack spacing={4} w="full">
-          <FormControl>
-            <FormLabel>Custas cartoriais (%)</FormLabel>
-            <Input
-              type="text"
-              inputMode="decimal"
-              pattern="[0-9]*[.,]?[0-9]*"
-              {...register("custas_cartorio")}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Assessoria jurídica (R$)</FormLabel>
-            <Input type="number" {...register("assessoria_juridica")} />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Custo reformas (R$)</FormLabel>
-            <Input type="number" {...register("custo_reformas")} />
-          </FormControl>
+          {renderField("custas_cartorio", "Custas cartoriais", {
+            suffix: " %",
+          })}
+          {renderField("assessoria_juridica", "Assessoria jurídica", {
+            prefix: "R$ ",
+          })}
+          {renderField("custo_reformas", "Custo reformas", { prefix: "R$ " })}
         </HStack>
 
         <HStack spacing={4} w="full">
-          <FormControl>
-            <FormLabel>Outros custos posse (R$)</FormLabel>
-            <Input type="number" {...register("outros_custos_posse")} />
-          </FormControl>
-          <FormControl>
-            <FormLabel>IPTU atrasado (R$)</FormLabel>
-            <Input type="number" {...register("iptu_atrasado")} />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Condomínio atrasado (R$)</FormLabel>
-            <Input type="number" {...register("condominio_atrasado")} />
-          </FormControl>
+          {renderField("outros_custos_posse", "Outros custos posse", {
+            prefix: "R$ ",
+          })}
+          {renderField("iptu_atrasado", "IPTU atrasado", { prefix: "R$ " })}
+          {renderField("condominio_atrasado", "Condomínio atrasado", {
+            prefix: "R$ ",
+          })}
         </HStack>
 
         <HStack spacing={4} w="full">
-          <FormControl>
-            <FormLabel>Condomínio mensal (R$)</FormLabel>
-            <Input type="number" {...register("condominio_mensal")} />
-          </FormControl>
-          <FormControl>
-            <FormLabel>IPTU anual (%)</FormLabel>
-            <Input
-              type="text"
-              inputMode="decimal"
-              pattern="[0-9]*[.,]?[0-9]*"
-              {...register("percentual_iptu_anual")}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Comissão corretor (%)</FormLabel>
-            <Input
-              type="text"
-              inputMode="decimal"
-              pattern="[0-9]*[.,]?[0-9]*"
-              {...register("comissao_corretor")}
-            />
-          </FormControl>
+          {renderField("condominio_mensal", "Condomínio mensal", {
+            prefix: "R$ ",
+          })}
+          {renderField("percentual_iptu_anual", "IPTU anual", { suffix: " %" })}
+          {renderField("comissao_corretor", "Comissão corretor", {
+            suffix: " %",
+          })}
         </HStack>
 
         <HStack spacing={4} w="full">
-          <FormControl>
-            <FormLabel>IR sobre lucro (%)</FormLabel>
-            <Input
-              type="text"
-              inputMode="decimal"
-              pattern="[0-9]*[.,]?[0-9]*"
-              {...register("imposto_renda_lucro")}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel>SELIC anual (%)</FormLabel>
-            <Input
-              type="text"
-              inputMode="decimal"
-              pattern="[0-9]*[.,]?[0-9]*"
-              {...register("selic_anual")}
-            />
-          </FormControl>
+          {renderField("imposto_renda_lucro", "IR sobre lucro", {
+            suffix: " %",
+          })}
+          {renderField("selic_anual", "SELIC anual", { suffix: " %" })}
           <FormControl>
             <FormLabel>Prazo até venda</FormLabel>
-            <Select {...register("prazo_venda_meses")}>
-              <option value="4">4 meses</option>
-              <option value="6">6 meses</option>
-              <option value="12">12 meses</option>
-              <option value="18">18 meses</option>
-              <option value="24">24 meses</option>
-            </Select>
+            <Controller
+              name="prazo_venda_meses"
+              control={control}
+              render={({ field }) => (
+                <Select {...field}>
+                  <option value="4">4 meses</option>
+                  <option value="6">6 meses</option>
+                  <option value="12">12 meses</option>
+                  <option value="18">18 meses</option>
+                  <option value="24">24 meses</option>
+                </Select>
+              )}
+            />
           </FormControl>
         </HStack>
 
         <Button
           bg={"#72171D"}
           color={"white"}
-          _hover={{
-            bg: "#5d1218",
-          }}
+          _hover={{ bg: "#5d1218" }}
           width="100%"
           borderRadius="md"
           fontWeight="bold"
           type="submit"
         >
-          Calcular Rentabilidade Financiada
+          Calcular Rentabilidade
         </Button>
       </VStack>
     </Box>

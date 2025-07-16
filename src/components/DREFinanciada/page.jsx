@@ -3,13 +3,21 @@
 import { Box, Text, VStack, Heading, SimpleGrid } from "@chakra-ui/react";
 
 const Section = ({ title, children }) => (
-  <Box p={5} borderWidth={1} borderRadius="md" w="full" bg="gray.50">
+  <Box
+    p={5}
+    borderWidth={1}
+    borderRadius="md"
+    w="full"
+    bg="gray.50"
+    minH="260px"
+    display="flex"
+    flexDirection="column"
+    justifyContent="space-between"
+  >
     <Heading size="sm" color="gray.700" mb={3}>
       {title}
     </Heading>
-    <VStack align="start" spacing={1}>
-      {children}
-    </VStack>
+    {children}
   </Box>
 );
 
@@ -45,6 +53,11 @@ export default function DREFinanciada({ r }) {
     selic_equivalente_periodo,
     investimento_pre_arrematacao,
     investimento_pos_arrematacao,
+    total_pos_posse,
+    total_durante_posse,
+    total_venda,
+    valor_arrematacao,
+    saldo_devedor,
   } = r;
 
   const brl = (v) =>
@@ -55,66 +68,91 @@ export default function DREFinanciada({ r }) {
 
   return (
     <Box bg="white" p={6} rounded="xl" w="full">
-      <Heading size="md" mb={5}>
-        📋 DRE Cronológica — Venda após {prazo_venda_meses} meses
+      <Heading textAlign={"center"} size="md" mb={5}>
+        📋 Descrição para venda após {prazo_venda_meses} meses
       </Heading>
 
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={4}>
         <Section title="🏁 Arrematação">
+          <Text fontWeight="semibold">
+            🔹 Valor da arrematação: {brl(valor_arrematacao)}
+          </Text>
           <Text>🔹 Entrada: {brl(entrada)}</Text>
           <Text>🔹 Valor Financiado: {brl(valor_financiado)}</Text>
-          <Text fontWeight="medium" mt={1}>
-            🔻 Custos:
+          <Text fontWeight="semibold" mt={1}>
+            🔻 Impostos de transferência:
           </Text>
-          <Text>• Leiloeiro: {brl(custo_leiloeiro)}</Text>
-          <Text>• ITBI: {brl(custo_itbi)}</Text>
-          <Text>• Cartório: {brl(custo_cartorio)}</Text>
-          <Text>• Assessoria: {brl(custo_assessoria)}</Text>
-          <Text fontWeight="semibold">Total: {brl(custos_arrematacao)}</Text>
+          <Text ml={10}>• Leiloeiro: {brl(custo_leiloeiro)}</Text>
+          <Text ml={10}>• ITBI (2,7%): {brl(custo_itbi)}</Text>
+          <Text ml={10}>• Cartório: {brl(custo_cartorio)}</Text>
+          <Text ml={10}>• Assessoria jurídica: {brl(custo_assessoria)}</Text>
+          <Text fontSize={"22px"} fontWeight="semibold" color={"red.600"}>
+            Total: {brl(custos_arrematacao)}
+          </Text>
         </Section>
 
         <Section title="📦 Pós-Posse (Custos únicos)">
-          <Text>🔻 IPTU atrasado: {brl(iptu_atrasado)}</Text>
-          <Text>🔻 Condomínio atrasado: {brl(condominio_atrasado)}</Text>
-          <Text>🔻 Reformas: {brl(custo_reformas)}</Text>
-          <Text>🔻 Outros custos: {brl(outros_custos_posse)}</Text>
+          <Box flex="1">
+            <Text>🔻 IPTU atrasado: {brl(iptu_atrasado)}</Text>
+            <Text>🔻 Condomínio atrasado: {brl(condominio_atrasado)}</Text>
+            <Text>🔻 Reformas: {brl(custo_reformas)}</Text>
+            <Text>🔻 Outros custos: {brl(outros_custos_posse)}</Text>
+          </Box>
+          <Box mt={2}>
+            <Text fontSize={"22px"} fontWeight="semibold" color="red.600">
+              Total: {brl(total_pos_posse)}
+            </Text>
+          </Box>
         </Section>
 
         <Section title="📆 Durante a Posse">
           <Text>🔻 Parcelas pagas: {brl(total_parcelas_pagas)}</Text>
           <Text>🔻 Condomínio: {brl(custo_condominio_mensal)}</Text>
           <Text>🔻 IPTU proporcional: {brl(custo_iptu_proporcional)}</Text>
+          <Text fontSize={"22px"} fontWeight="semibold" color="red.600">
+            Total: {brl(total_durante_posse)}
+          </Text>
         </Section>
 
         <Section title="💰 Venda">
-          <Text>🔹 Valor estimado de venda: {brl(valor_venda_estimado)}</Text>
-          <Text>🔻 Corretagem: {brl(custo_corretagem)}</Text>
-          <Text>🔻 Imposto sobre lucro: {brl(imposto_sobre_lucro)}</Text>
-          <Text>🔻 Custos totais da venda: {brl(custos_venda)}</Text>
           <Text fontWeight="semibold">
-            Valor líquido: {brl(valor_liquido_venda)}
+            🔹 Valor estimado de venda: {brl(valor_venda_estimado)}
+          </Text>
+          <Text>🔻 % Corretagem: {brl(custo_corretagem)}</Text>
+          <Text>🔻 Imposto sobre lucro: {brl(imposto_sobre_lucro)}</Text>
+
+          <Text fontSize={"22px"} fontWeight="semibold" color="red.600">
+            Total: {brl(total_venda)}
           </Text>
         </Section>
       </SimpleGrid>
 
       <Section title="📈 Resultado Final">
-        <Text>🔹 Custo total real: {brl(custo_total)}</Text>
-        <Text color="green.600" fontWeight="semibold">
+        <Text>🔹 Valor estimado de venda: {brl(valor_venda_estimado)}</Text>
+        <Text>🔹 Valor da arrematação: {brl(valor_arrematacao)}</Text>
+        <Text ml={10}>🔹 Entrada: {brl(entrada)}</Text>
+        <Text ml={10}>🔹 Custo arrematação: {brl(custos_arrematacao)}</Text>
+        <Text ml={10}>🔹 Custo pós-posse: {brl(total_pos_posse)}</Text>
+        <Text ml={10}>🔹 Custo durante posse: {brl(total_durante_posse)}</Text>
+        <Text ml={10}>🔹 Custo na venda: {brl(total_venda)}</Text>
+
+        <Text mt={3}>🔹 Valor desembolsado: {brl(custo_total)}</Text>
+        <Text>🔹 Saldo devedor restante: {brl(saldo_devedor)}</Text>
+
+        <Text fontSize={"22px"} mt={1} color="green.600" fontWeight="semibold">
           ✅ Lucro líquido: {brl(lucro_liquido)}
         </Text>
-        <Text>📊 ROI total: {roi_real.toFixed(2)}%</Text>
-        <Text>📊 Sobre entrada: {retorno_sobre_entrada.toFixed(2)}%</Text>
-        <Text>📈 Rent. anualizada: {rentabilidade_anualizada.toFixed(2)}%</Text>
-        <Text>📉 SELIC período: {selic_equivalente_periodo.toFixed(2)}%</Text>
-      </Section>
+        <Text mt={3}>📊 ROI total: {roi_real.toFixed(2)}%</Text>
+        <Text>📊 ROI sobre entrada: {retorno_sobre_entrada.toFixed(2)}%</Text>
 
-      <Box mt={4}>
-        <Section title="🧾 Investimento por Fase">
-          <Text>🔸 Pré-arrematação: {brl(investimento_pre_arrematacao)}</Text>
-          <Text>🔸 Pós-arrematação: {brl(investimento_pos_arrematacao)}</Text>
-          <Text fontWeight="semibold">🔸 Total: {brl(custo_total)}</Text>
-        </Section>
-      </Box>
+        <Text mt={3}>
+          📈 Rent. anualizada: {rentabilidade_anualizada.toFixed(2)}%
+        </Text>
+        <Text>
+          📉 Rent. da SELIC no mesmo período:{" "}
+          {selic_equivalente_periodo.toFixed(2)}%
+        </Text>
+      </Section>
 
       <Box
         mt={4}
@@ -141,7 +179,7 @@ export default function DREFinanciada({ r }) {
           }
         >
           {rentabilidade_anualizada > selic_equivalente_periodo
-            ? "✅ Rentabilidade muito superior à SELIC."
+            ? "✅ Rentabilidade superior à SELIC."
             : "⚠️ Rentabilidade inferior à SELIC."}
         </Text>
       </Box>
