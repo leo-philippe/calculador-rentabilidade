@@ -1,6 +1,14 @@
 "use client";
 import { useState } from "react";
-import { Box, Button, HStack, Heading, VStack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  HStack,
+  Stack,
+  Heading,
+  VStack,
+  Text,
+} from "@chakra-ui/react";
 import PagamentoAVista from "../avista/page";
 import PagamentoFinanciado from "../financiado/page";
 import DREFinanciada from "@/components/DREFinanciada/page";
@@ -13,7 +21,6 @@ const Simulacao = () => {
   return (
     <Box
       minH="100vh"
-      // bgImage="url('/images/bg-leilao.png')"
       bg={"#F1F1F1"}
       bgSize="cover"
       bgPosition="center"
@@ -42,11 +49,17 @@ const Simulacao = () => {
           Calculadora de Rentabilidade
         </Heading>
 
-        <HStack spacing={4} mb={6}>
+        {/* Botões responsivos */}
+        <Stack
+          direction={{ base: "column", md: "row" }}
+          spacing={4}
+          mb={6}
+          w="full"
+        >
           <Button
             onClick={() => {
               setActiveTab("vista");
-              setResultado(null); // limpa resultado ao trocar aba
+              setResultado(null);
             }}
             bg={activeTab === "vista" ? "#72171D" : "gray.100"}
             color={activeTab === "vista" ? "white" : "black"}
@@ -71,7 +84,7 @@ const Simulacao = () => {
           >
             Pagamento Financiado
           </Button>
-        </HStack>
+        </Stack>
 
         <VStack spacing={6}>
           {activeTab === "vista" && (
@@ -82,6 +95,7 @@ const Simulacao = () => {
           )}
         </VStack>
       </Box>
+
       <Box
         bg="white"
         boxShadow="lg"
@@ -90,13 +104,11 @@ const Simulacao = () => {
         w="full"
         maxW="960px"
       >
-        {/* Box separada fora do card */}
-        {!resultado && (
+        {!resultado ? (
           <Text fontStyle="italic" color="gray.500" textAlign="center">
             Preencha os dados acima e clique em "Calcular" para ver o resultado.
           </Text>
-        )}
-        {resultado && (
+        ) : (
           <Box p={2} shadow="lg" borderRadius={"10px"}>
             {activeTab === "vista" ? (
               <DREDetalhada r={resultado} />

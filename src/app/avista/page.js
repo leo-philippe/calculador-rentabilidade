@@ -7,6 +7,7 @@ import {
   FormLabel,
   Input,
   HStack,
+  Stack,
   VStack,
   Select,
   useToast,
@@ -95,7 +96,7 @@ export default function PagamentoAVista({ onCalculoFinalizado }) {
   return (
     <Box p={6} maxW="900px" mx="auto">
       <VStack as="form" spacing={4} onSubmit={handleSubmit(onSubmit)}>
-        <HStack spacing={4} w="full">
+        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
           {renderNumberField("valor_arrematacao", "Valor de arrematação", {
             prefix: "R$ ",
           })}
@@ -109,9 +110,9 @@ export default function PagamentoAVista({ onCalculoFinalizado }) {
           {renderNumberField("taxa_leiloeiro", "Taxa do leiloeiro", {
             suffix: " %",
           })}
-        </HStack>
+        </Stack>
 
-        <HStack spacing={4} w="full">
+        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
           <FormControl>
             <FormLabel>Prazo estimado até venda</FormLabel>
             <Controller
@@ -131,9 +132,9 @@ export default function PagamentoAVista({ onCalculoFinalizado }) {
           {renderNumberField("custas_cartorio", "Custas cartoriais", {
             suffix: " %",
           })}
-        </HStack>
+        </Stack>
 
-        <HStack spacing={4} w="full">
+        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
           {renderNumberField("assessoria_juridica", "Assessoria jurídica", {
             prefix: "R$ ",
           })}
@@ -143,9 +144,9 @@ export default function PagamentoAVista({ onCalculoFinalizado }) {
           {renderNumberField("outros_custos_posse", "Outros custos pós-posse", {
             prefix: "R$ ",
           })}
-        </HStack>
+        </Stack>
 
-        <HStack spacing={4} w="full">
+        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
           {renderNumberField("iptu_atrasado", "IPTU atrasado", {
             prefix: "R$ ",
           })}
@@ -155,9 +156,9 @@ export default function PagamentoAVista({ onCalculoFinalizado }) {
           {renderNumberField("condominio_mensal", "Condomínio mensal", {
             prefix: "R$ ",
           })}
-        </HStack>
+        </Stack>
 
-        <HStack spacing={4} w="full">
+        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
           {renderNumberField("percentual_iptu_anual", "Percentual IPTU anual", {
             suffix: " %",
           })}
@@ -167,14 +168,13 @@ export default function PagamentoAVista({ onCalculoFinalizado }) {
           {renderNumberField("imposto_renda_lucro", "Imposto de renda", {
             suffix: " %",
           })}
-        </HStack>
+        </Stack>
 
-        <HStack spacing={4} w="full">
+        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
           {renderNumberField("selic_anual", "Taxa Selic atual", {
             suffix: " %",
           })}
-          <Box flex="1" /> {/* espaçador */}
-        </HStack>
+        </Stack>
 
         <Button
           bg="#72171D"

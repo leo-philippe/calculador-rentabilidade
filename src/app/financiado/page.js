@@ -10,6 +10,7 @@ import {
   VStack,
   Select,
   useToast,
+  Stack,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -100,7 +101,7 @@ export default function PagamentoFinanciado({ onCalculoFinalizado }) {
   return (
     <Box p={6} maxW="900px" mx="auto">
       <VStack as="form" spacing={4} onSubmit={handleSubmit(onSubmit)}>
-        <HStack spacing={4} w="full">
+        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
           {renderField("valor_arrematacao", "Valor de arrematação", {
             prefix: "R$ ",
           })}
@@ -108,17 +109,17 @@ export default function PagamentoFinanciado({ onCalculoFinalizado }) {
             prefix: "R$ ",
           })}
           {renderField("entrada_percentual", "Entrada", { suffix: " %" })}
-        </HStack>
+        </Stack>
 
-        <HStack spacing={4} w="full">
+        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
           {renderField("taxa_financiamento_aa", "Tx. financiamento anual", {
             suffix: " %",
           })}
           {renderField("prazo_meses_total", "Prazo total (meses)")}
           {renderField("taxa_leiloeiro", "Taxa do leiloeiro", { suffix: " %" })}
-        </HStack>
+        </Stack>
 
-        <HStack spacing={4} w="full">
+        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
           {renderField("custas_cartorio", "Custas cartoriais", {
             suffix: " %",
           })}
@@ -126,9 +127,9 @@ export default function PagamentoFinanciado({ onCalculoFinalizado }) {
             prefix: "R$ ",
           })}
           {renderField("custo_reformas", "Custo reformas", { prefix: "R$ " })}
-        </HStack>
+        </Stack>
 
-        <HStack spacing={4} w="full">
+        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
           {renderField("outros_custos_posse", "Outros custos posse", {
             prefix: "R$ ",
           })}
@@ -136,9 +137,9 @@ export default function PagamentoFinanciado({ onCalculoFinalizado }) {
           {renderField("condominio_atrasado", "Condomínio atrasado", {
             prefix: "R$ ",
           })}
-        </HStack>
+        </Stack>
 
-        <HStack spacing={4} w="full">
+        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
           {renderField("condominio_mensal", "Condomínio mensal", {
             prefix: "R$ ",
           })}
@@ -146,13 +147,14 @@ export default function PagamentoFinanciado({ onCalculoFinalizado }) {
           {renderField("comissao_corretor", "Comissão corretor", {
             suffix: " %",
           })}
-        </HStack>
+        </Stack>
 
-        <HStack spacing={4} w="full">
+        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
           {renderField("imposto_renda_lucro", "IR sobre lucro", {
             suffix: " %",
           })}
           {renderField("selic_anual", "SELIC anual", { suffix: " %" })}
+
           <FormControl>
             <FormLabel>Prazo até venda</FormLabel>
             <Controller
@@ -169,7 +171,7 @@ export default function PagamentoFinanciado({ onCalculoFinalizado }) {
               )}
             />
           </FormControl>
-        </HStack>
+        </Stack>
 
         <Button
           bg={"#72171D"}
