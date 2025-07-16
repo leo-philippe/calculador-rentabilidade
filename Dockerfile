@@ -1,23 +1,25 @@
-# Use a imagem oficial do Node.js
-FROM node:18-alpine
+# Etapa 1: build
+FROM node:18-alpine AS builder
 
-# Crie diretório de trabalho
 WORKDIR /app
 
-# Copie arquivos
 COPY . .
 
-# Instale dependências
 RUN npm install
-
-# Build da aplicação Next.js
 RUN npm run build
 
-# Exporte para produção (apenas para `output: standalone`)
-RUN npm install -g serve
+# Etapa 2: imagem final
+FROM node:18-alpine
 
-# Exponha a porta esperada pelo Cloud Run
+WORKDIR /app
+
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+ENV PORT=8080
+
 EXPOSE 8080
 
-# Inicie o app
 CMD ["npm", "start"]
