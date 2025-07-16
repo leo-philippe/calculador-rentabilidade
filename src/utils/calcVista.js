@@ -73,7 +73,12 @@ export function calculaRentabilidadeAVista(data) {
   // ---------- Indicadores ----------
   const roi = (lucro_liquido / custo_total) * 100;
   const rent_efetiva = lucro_liquido / custo_total;
-  const rent_anual = (1 + rent_efetiva) ** (12 / prazo_venda_meses) - 1;
+
+  let rent_anual = null;
+  if (rent_efetiva > -1 && prazo_venda_meses > 0) {
+    rent_anual = (1 + rent_efetiva) ** (12 / prazo_venda_meses) - 1;
+  }
+
   const selic_equiv = (1 + selic_anual) ** (prazo_venda_meses / 12) - 1;
 
   return {

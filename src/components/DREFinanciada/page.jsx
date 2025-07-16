@@ -152,6 +152,10 @@ export default function DREFinanciada({ r }) {
           📉 Rent. da SELIC no mesmo período:{" "}
           {selic_equivalente_periodo.toFixed(2)}%
         </Text>
+        <Text mt={5} fontSize={"10px"} color={"#b8b8b8"}>
+          ** ROI significa "Return on Investment" ou "Retorno sobre o
+          investimento
+        </Text>
       </Section>
 
       <Box

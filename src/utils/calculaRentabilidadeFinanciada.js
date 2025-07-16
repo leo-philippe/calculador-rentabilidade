@@ -97,17 +97,21 @@ export function calculaRentabilidadeFinanciada(data) {
   const lucro_liquido = valor_venda_estimado - saldo_devedor - custo_total;
 
   const capital_proprio_total = custo_total;
-  const roi_real =
-    capital_proprio_total > 0
-      ? (lucro_liquido / capital_proprio_total) * 100
-      : 0;
+  const roi_real = (lucro_liquido / capital_proprio_total) * 100;
+
   const retorno_sobre_entrada =
     entrada > 0 ? (lucro_liquido / entrada) * 100 : 0;
+
   const rentabilidade_efetiva = lucro_liquido / capital_proprio_total;
-  const rentabilidade_anualizada =
-    Math.pow(1 + rentabilidade_efetiva, 12 / prazo_venda_meses) - 1;
+
+  let rentabilidade_anualizada = null;
+  if (rentabilidade_efetiva > -1 && prazo_venda_meses > 0) {
+    rentabilidade_anualizada =
+      (Math.pow(1 + rentabilidade_efetiva, 12 / prazo_venda_meses) - 1) * 100;
+  }
+
   const selic_equivalente_periodo =
-    Math.pow(1 + selic_anual, prazo_venda_meses / 12) - 1;
+    (Math.pow(1 + selic_anual, prazo_venda_meses / 12) - 1) * 100;
 
   const total_pos_posse =
     iptu_atrasado + condominio_atrasado + custo_reformas + outros_custos_posse;

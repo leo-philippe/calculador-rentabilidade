@@ -82,7 +82,7 @@ export default function DREDetalhada({ r }) {
   return (
     <Box bg="white" p={6} rounded="xl" w="full">
       <Heading textAlign="center" size="md" mb={5}>
-        📋 Descrição Cronológica para venda após {prazo_venda_meses} meses
+        📋 Descrição para venda após {prazo_venda_meses} meses
       </Heading>
 
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={4}>
@@ -148,6 +148,10 @@ export default function DREDetalhada({ r }) {
         </Text>
         <Text>
           📉 Rent. da SELIC no mesmo período: {(selic_equiv * 100).toFixed(2)}%
+        </Text>
+        <Text mt={5} fontSize={"10px"} color={"#b8b8b8"}>
+          ** ROI significa "Return on Investment" ou "Retorno sobre o
+          investimento
         </Text>
       </Section>
 
