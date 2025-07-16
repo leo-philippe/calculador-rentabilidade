@@ -1,30 +1,27 @@
-name: Deploy para Google Cloud Storage
+name: Deploy para Cloud Run
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   deploy:
+    name: Build e Deploy
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📦 Checkout do código
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: 📥 Instalar dependências
-        run: npm install
-
-      - name: ⚙️ Buildar o projeto Next.js (modo export)
-        run: npm run build
-
-      - name: 🔐 Autenticar com GCP
+      - name: Autenticar com o Google Cloud
         uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-      - name: 🚀 Fazer upload para o bucket
-        uses: google-github-actions/upload-cloud-storage@v1
+      - name: Deploy no Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
         with:
-          path: ./out
-          destination: calculadora-rentabilidade
+          service: calculadora-rentabilidade
+          region: southamerica-east1
+          source: .
