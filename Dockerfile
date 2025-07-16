@@ -20,4 +20,4 @@ RUN npm install -g serve
 EXPOSE 8080
 
 # Inicie o app
-CMD ["npx", "serve", "out", "-l", "8080"]
+CMD ["npm", "start"]
