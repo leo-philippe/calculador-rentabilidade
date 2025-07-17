@@ -3,18 +3,24 @@
 import {
   Box,
   Button,
+  Divider,
   FormControl,
   FormLabel,
   Input,
-  HStack,
   Stack,
   VStack,
   Select,
   useToast,
+  HStack,
+  Tooltip,
+  Icon,
+  Text,
+  Heading,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
+import { InfoOutlineIcon } from "@chakra-ui/icons";
 import { calculaRentabilidadeAVista } from "@/utils/calcVista";
 
 export default function PagamentoAVista({ onCalculoFinalizado }) {
@@ -49,6 +55,33 @@ export default function PagamentoAVista({ onCalculoFinalizado }) {
       ])
     );
 
+    const camposObrigatorios = ["valor_arrematacao", "valor_venda_estimado"];
+    const nomesLegiveis = {
+      valor_arrematacao: "Valor de arrematação",
+      valor_venda_estimado: "Valor estimado de venda",
+    };
+
+    const camposComErro = camposObrigatorios.filter(
+      (campo) => !camposNumericos[campo] || camposNumericos[campo] <= 0
+    );
+
+    if (camposComErro.length > 0) {
+      const camposTraduzidos = camposComErro.map(
+        (campo) => nomesLegiveis[campo] || campo
+      );
+
+      toast({
+        title: "Preencha todos os campos obrigatórios",
+        description: `Os seguintes campos precisam ser preenchidos com valores maiores que zero: ${camposTraduzidos.join(
+          ", "
+        )}`,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
     const camposPercentuais = [
       "taxa_leiloeiro",
       "custas_cartorio",
@@ -71,8 +104,30 @@ export default function PagamentoAVista({ onCalculoFinalizado }) {
   };
 
   const renderNumberField = (name, label, options = {}) => (
-    <FormControl key={name}>
-      <FormLabel>{label}</FormLabel>
+    <FormControl key={name} isRequired={options.required}>
+      <FormLabel>
+        <HStack spacing={1}>
+          {options.tooltip && (
+            <Tooltip
+              borderRadius="10px"
+              fontSize="sm"
+              placement="top"
+              bg={"#f1f1f1"}
+              color={"#505050ff"}
+              label={options.tooltip}
+              hasArrow
+            >
+              <span>
+                <Icon as={InfoOutlineIcon} boxSize={3} color="gray.500" />
+              </span>
+            </Tooltip>
+          )}
+          <span>
+            {label}
+            {options.required && <span style={{ color: "red" }}>*</span>}
+          </span>
+        </HStack>
+      </FormLabel>
       <Controller
         name={name}
         control={control}
@@ -95,99 +150,163 @@ export default function PagamentoAVista({ onCalculoFinalizado }) {
 
   return (
     <Box p={6} maxW="900px" mx="auto">
-      <VStack as="form" spacing={4} onSubmit={handleSubmit(onSubmit)}>
-        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
-          {renderNumberField("valor_arrematacao", "Valor de arrematação", {
-            prefix: "R$ ",
-          })}
-          {renderNumberField(
-            "valor_venda_estimado",
-            "Valor estimado de venda",
-            {
-              prefix: "R$ ",
-            }
-          )}
-          {renderNumberField("taxa_leiloeiro", "Taxa do leiloeiro", {
-            suffix: " %",
-          })}
-        </Stack>
-
-        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
-          <FormControl>
-            <FormLabel>Prazo estimado até venda</FormLabel>
-            <Controller
-              name="prazo_venda_meses"
-              control={control}
-              render={({ field }) => (
-                <Select {...field}>
-                  <option value="4">4 meses</option>
-                  <option value="6">6 meses</option>
-                  <option value="12">12 meses</option>
-                  <option value="18">18 meses</option>
-                  <option value="24">24 meses</option>
-                </Select>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <VStack spacing={5} align="stretch">
+          <Box>
+            <Heading as="h3" size="md" mb={2} color="#72171D">
+              🏠 Imóvel
+            </Heading>
+            <Stack
+              direction={{ base: "column", md: "row" }}
+              spacing={4}
+              w="full"
+            >
+              {renderNumberField("valor_arrematacao", "Valor de arrematação", {
+                prefix: "R$ ",
+                tooltip: "Valor pago no leilão para adquirir o imóvel.",
+              })}
+              {renderNumberField(
+                "valor_venda_estimado",
+                "Valor estimado de venda",
+                {
+                  prefix: "R$ ",
+                  tooltip:
+                    "Quanto você espera vender o imóvel após regularização e reforma.",
+                }
               )}
-            />
-          </FormControl>
-          {renderNumberField("custas_cartorio", "Custas cartoriais", {
-            suffix: " %",
-          })}
-        </Stack>
+            </Stack>
+          </Box>
 
-        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
-          {renderNumberField("assessoria_juridica", "Assessoria jurídica", {
-            prefix: "R$ ",
-          })}
-          {renderNumberField("custo_reformas", "Reforma", {
-            prefix: "R$ ",
-          })}
-          {renderNumberField("outros_custos_posse", "Outros custos pós-posse", {
-            prefix: "R$ ",
-          })}
-        </Stack>
+          <Divider />
 
-        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
-          {renderNumberField("iptu_atrasado", "IPTU atrasado", {
-            prefix: "R$ ",
-          })}
-          {renderNumberField("condominio_atrasado", "Condomínio atrasado", {
-            prefix: "R$ ",
-          })}
-          {renderNumberField("condominio_mensal", "Condomínio mensal", {
-            prefix: "R$ ",
-          })}
-        </Stack>
+          <Box>
+            <Heading as="h3" size="md" mb={2} color="#72171D">
+              💸 Custos de aquisição
+            </Heading>
+            <Stack
+              direction={{ base: "column", md: "row" }}
+              spacing={4}
+              w="full"
+            >
+              {renderNumberField("taxa_leiloeiro", "Taxa do leiloeiro", {
+                suffix: " %",
+                tooltip:
+                  "Percentual cobrado pelo leiloeiro sobre o valor de arrematação.",
+              })}
+              {renderNumberField("custas_cartorio", "Custas cartoriais", {
+                suffix: " %",
+                tooltip:
+                  "Percentual estimado com despesas de registro e escritura do imóvel.",
+              })}
+              {renderNumberField("assessoria_juridica", "Assessoria jurídica", {
+                prefix: "R$ ",
+                tooltip:
+                  "Valor pago para auxílio jurídico na regularização do imóvel.",
+              })}
+            </Stack>
+            <Stack
+              direction={{ base: "column", md: "row" }}
+              spacing={4}
+              w="full"
+              mt={4}
+            >
+              {renderNumberField("custo_reformas", "Reforma", {
+                prefix: "R$ ",
+                tooltip:
+                  "Estimativa de custos para deixar o imóvel em condições de venda.",
+              })}
+              {renderNumberField(
+                "outros_custos_posse",
+                "Outros custos pós-posse",
+                {
+                  prefix: "R$ ",
+                  tooltip:
+                    "Despesas extras para tomar posse, como mudança ou limpeza.",
+                }
+              )}
+            </Stack>
+          </Box>
 
-        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
-          {renderNumberField("percentual_iptu_anual", "Percentual IPTU anual", {
-            suffix: " %",
-          })}
-          {renderNumberField("comissao_corretor", "Comissão do corretor", {
-            suffix: " %",
-          })}
-          {renderNumberField("imposto_renda_lucro", "Imposto de renda", {
-            suffix: " %",
-          })}
-        </Stack>
+          <Divider />
 
-        <Stack direction={{ base: "column", md: "row" }} spacing={4} w="full">
-          {renderNumberField("selic_anual", "Taxa Selic atual", {
-            suffix: " %",
-          })}
-        </Stack>
+          <Box>
+            <Heading as="h3" size="md" mb={2} color="#72171D">
+              🧾 Dívidas e encargos
+            </Heading>
+            <Stack
+              direction={{ base: "column", md: "row" }}
+              spacing={4}
+              w="full"
+            >
+              {renderNumberField("iptu_atrasado", "IPTU atrasado", {
+                prefix: "R$ ",
+                tooltip:
+                  "Dívida de IPTU que pode ser repassada ao novo proprietário.",
+              })}
+              {renderNumberField("condominio_atrasado", "Condomínio atrasado", {
+                prefix: "R$ ",
+                tooltip: "Dívida de condomínio deixada pelo antigo morador.",
+              })}
+              {renderNumberField("condominio_mensal", "Condomínio mensal", {
+                prefix: "R$ ",
+                tooltip:
+                  "Valor do condomínio a ser pago enquanto o imóvel não for vendido.",
+              })}
+            </Stack>
+          </Box>
 
-        <Button
-          bg="#72171D"
-          color="white"
-          _hover={{ bg: "#5d1218" }}
-          width="100%"
-          type="submit"
-          borderRadius="md"
-          fontWeight="bold"
-        >
-          Calcular Rentabilidade
-        </Button>
-      </VStack>
+          <Divider />
+
+          <Box>
+            <Heading as="h3" size="md" mb={2} color="#72171D">
+              📊 Parâmetros da simulação
+            </Heading>
+            <Stack
+              direction={{ base: "column", md: "row" }}
+              spacing={4}
+              w="full"
+            >
+              {renderNumberField("comissao_corretor", "Comissão do corretor", {
+                suffix: " %",
+                tooltip: "Percentual pago ao corretor pela venda do imóvel.",
+              })}
+              {renderNumberField("selic_anual", "Taxa Selic atual", {
+                suffix: " %",
+                tooltip:
+                  "Usada para estimar a rentabilidade do capital no período.",
+              })}
+              <FormControl>
+                <FormLabel>Prazo estimado até venda</FormLabel>
+                <Controller
+                  name="prazo_venda_meses"
+                  control={control}
+                  render={({ field }) => (
+                    <Select {...field}>
+                      <option value="4">4 meses</option>
+                      <option value="6">6 meses</option>
+                      <option value="12">12 meses</option>
+                      <option value="18">18 meses</option>
+                      <option value="24">24 meses</option>
+                    </Select>
+                  )}
+                />
+              </FormControl>
+            </Stack>
+          </Box>
+
+          <Button
+            bg="#72171D"
+            color="white"
+            _hover={{ bg: "#5d1218" }}
+            width="100%"
+            type="submit"
+            borderRadius="md"
+            fontWeight="bold"
+          >
+            Calcular Rentabilidade
+          </Button>
+        </VStack>
+      </form>
     </Box>
   );
 }
